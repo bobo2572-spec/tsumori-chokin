@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>つもり貯金</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="つもり貯金">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,8 +21,9 @@
   <header>
     <h1>🐷 つもり貯金</h1>
     <div id="header-right">
-      <button id="reset-btn" class="ghost-btn hidden">次のミッション</button>
-      <button id="logout-btn" class="ghost-btn hidden">ログアウト</button>
+      <button id="history-btn" class="ghost-btn hidden">📋 履歴</button>
+      <button id="reset-btn"   class="ghost-btn hidden">次のミッション</button>
+      <button id="back-btn"    class="ghost-btn hidden">← 戻る</button>
     </div>
   </header>
 
@@ -22,29 +32,6 @@
     <div class="loading-wrap">
       <div class="spinner"></div>
       <p>読み込み中…</p>
-    </div>
-  </div>
-
-  <!-- Auth -->
-  <div id="auth-screen" class="screen hidden">
-    <div class="card">
-      <h2 id="auth-title">ログイン</h2>
-      <p class="auth-sub" id="auth-sub">メールアドレスとパスワードでログイン</p>
-      <div class="input-group">
-        <label>メールアドレス</label>
-        <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <div class="input-group">
-        <label>パスワード</label>
-        <input type="password" id="auth-password" placeholder="6文字以上" autocomplete="current-password">
-      </div>
-      <p id="auth-error" class="msg-error hidden"></p>
-      <p id="auth-success" class="msg-success hidden"></p>
-      <button id="auth-submit-btn" class="primary-btn">ログイン</button>
-      <p class="auth-toggle">
-        <span class="toggle-label">アカウントをお持ちでない方は</span>
-        <a href="#" id="auth-toggle-link">新規登録</a>
-      </p>
     </div>
   </div>
 
@@ -85,9 +72,7 @@
           </div>
         </div>
         <div id="gauge-wrap" class="hidden">
-          <div class="gauge-track">
-            <div id="gauge-bar"></div>
-          </div>
+          <div class="gauge-track"><div id="gauge-bar"></div></div>
           <p id="gauge-percent">0%</p>
         </div>
       </div>
@@ -100,12 +85,41 @@
         </div>
       </div>
 
-      <div class="input-group" style="margin-bottom: 10px;">
+      <div class="input-group" style="margin-bottom:10px;">
         <input type="number" id="add-amount" placeholder="追加する金額を入力" min="1">
       </div>
       <div class="action-buttons">
-        <button id="add-btn" class="primary-btn">貯金する 💰</button>
+        <button id="add-btn"   class="primary-btn">貯金する 💰</button>
         <button id="voice-btn" class="icon-btn" title="音声入力">🎤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div id="history-screen" class="screen hidden">
+    <div class="card">
+      <h2>📋 貯金の記録</h2>
+
+      <!-- Summary -->
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="summary-label">累積総額</div>
+          <div class="summary-amount">¥<span id="cumulative-amount">0</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">今月の達成額</div>
+          <div class="summary-amount">¥<span id="monthly-amount">0</span></div>
+        </div>
+      </div>
+
+      <!-- Monthly breakdown -->
+      <div id="monthly-breakdown" class="history-section"></div>
+
+      <!-- Mission list -->
+      <div class="history-section">
+        <div class="section-title">達成ミッション</div>
+        <div id="history-empty" class="history-empty hidden">まだ達成したミッションがありません</div>
+        <div id="mission-list"></div>
       </div>
     </div>
   </div>
@@ -124,7 +138,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <script src="js/config.js"></script>
-<script src="js/auth.js"></script>
 <script src="js/app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+</script>
 </body>
 </html>

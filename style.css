@@ -369,3 +369,92 @@ input[type="file"] { display: none; }
 .big-emoji       { font-size: 3.5rem; margin-bottom: 10px; }
 .completion-card h2  { font-size: 1.6rem; margin-bottom: 8px; color: var(--primary); }
 .completion-card p   { font-size: 1rem; color: var(--muted); margin-bottom: 22px; line-height: 1.6; }
+
+/* ─── History screen ─── */
+.summary-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  flex: 1;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.summary-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.summary-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.history-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--border);
+}
+
+.monthly-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.monthly-row:last-child { border-bottom: none; }
+.monthly-row-label { color: var(--muted); }
+.monthly-row-amount { font-weight: 700; color: var(--text); }
+
+.history-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-item:last-child { border-bottom: none; }
+
+.history-goal {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.history-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.history-amount { color: var(--primary); font-weight: 700; }
+.history-date   { color: var(--muted); }
+
+.history-empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 24px 0;
+}
