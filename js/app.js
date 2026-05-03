@@ -354,7 +354,7 @@ async function loadHistory() {
 
   const { data: all } = await sb
     .from('missions')
-    .select('goal_name, target_amount, current_amount, completed, updated_at')
+    .select('id, goal_name, target_amount, current_amount, completed, updated_at')
     .eq('user_id', currentUserId)
     .order('updated_at', { ascending: false });
 
@@ -420,14 +420,28 @@ async function loadHistory() {
       const d = new Date(m.updated_at);
       const dateStr = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
       return `
-        <div class="history-item">
+        <div class="history-item" data-id="${m.id}">
           <div class="history-goal">🎯 ${m.goal_name}</div>
           <div class="history-meta">
             <span class="history-amount">¥${m.current_amount.toLocaleString()}</span>
             <span class="history-date">${dateStr}</span>
+            <button class="delete-btn" data-id="${m.id}" title="削除">🗑</button>
           </div>
         </div>
       `;
     }).join('');
+
+    // 削除ボタンのイベント
+    listEl.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('この記録を削除しますか？')) return;
+        const id = btn.dataset.id;
+        const { error } = await sb.from('missions').delete().eq('id', id);
+        if (error) { alert('削除に失敗しました。'); return; }
+        // アイテムをDOMから除去して集計を再描画
+        btn.closest('.history-item').remove();
+        await loadHistory();
+      });
+    });
   }
 }

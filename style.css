@@ -450,7 +450,19 @@ input[type="file"] { display: none; }
 }
 
 .history-amount { color: var(--primary); font-weight: 700; }
-.history-date   { color: var(--muted); }
+.history-date   { color: var(--muted); flex: 1; text-align: right; margin-right: 8px; }
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+.delete-btn:hover { opacity: 1; }
 
 .history-empty {
   text-align: center;
