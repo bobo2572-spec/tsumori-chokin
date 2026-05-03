@@ -41,19 +41,35 @@ function showScreen(name) {
   backBtn.classList.toggle('hidden',    name !== 'history');
 }
 
-// ─── Anonymous auth (自動サインイン) ─────────────────────────────────────────
-sb.auth.onAuthStateChange(async (_event, session) => {
-  if (session) {
-    currentUserId = session.user.id;
-    await loadMission();
-  } else {
-    // セッションなし → 匿名で自動ログイン
-    const { error } = await sb.auth.signInAnonymously();
-    if (error) {
-      console.error('匿名サインイン失敗:', error);
-      showScreen('setup'); // フォールバック
+// ─── 起動時の認証 (getSession → 匿名サインイン) ──────────────────────────────
+(async function init() {
+  showScreen('loading');
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      currentUserId = session.user.id;
+    } else {
+      const { data, error } = await sb.auth.signInAnonymously();
+      if (error) throw error;
+      currentUserId = data.session.user.id;
     }
-    // 成功すると onAuthStateChange が再度 session あり で発火
+    await loadMission();
+  } catch (e) {
+    console.error('起動エラー:', e);
+    showScreen('setup');
+  }
+})();
+
+// セッション期限切れ時の再サインイン
+sb.auth.onAuthStateChange(async (event) => {
+  if (event === 'SIGNED_OUT') {
+    try {
+      const { data } = await sb.auth.signInAnonymously();
+      if (data?.session) {
+        currentUserId = data.session.user.id;
+        await loadMission();
+      }
+    } catch {}
   }
 });
 
