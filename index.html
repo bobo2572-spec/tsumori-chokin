@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>つもり貯金</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <h1>🐷 つもり貯金</h1>
+    <div id="header-right">
+      <button id="reset-btn" class="ghost-btn hidden">次のミッション</button>
+      <button id="logout-btn" class="ghost-btn hidden">ログアウト</button>
+    </div>
+  </header>
+
+  <!-- Loading -->
+  <div id="loading-screen" class="screen">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <p>読み込み中…</p>
+    </div>
+  </div>
+
+  <!-- Auth -->
+  <div id="auth-screen" class="screen hidden">
+    <div class="card">
+      <h2 id="auth-title">ログイン</h2>
+      <p class="auth-sub" id="auth-sub">メールアドレスとパスワードでログイン</p>
+      <div class="input-group">
+        <label>メールアドレス</label>
+        <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="input-group">
+        <label>パスワード</label>
+        <input type="password" id="auth-password" placeholder="6文字以上" autocomplete="current-password">
+      </div>
+      <p id="auth-error" class="msg-error hidden"></p>
+      <p id="auth-success" class="msg-success hidden"></p>
+      <button id="auth-submit-btn" class="primary-btn">ログイン</button>
+      <p class="auth-toggle">
+        <span class="toggle-label">アカウントをお持ちでない方は</span>
+        <a href="#" id="auth-toggle-link">新規登録</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Setup -->
+  <div id="setup-screen" class="screen hidden">
+    <div class="card">
+      <h2>🎯 ミッション設定</h2>
+      <div class="input-group">
+        <label>貯金の目的</label>
+        <input type="text" id="goal-name" placeholder="例：旅行に行く！新しいカメラ！">
+      </div>
+      <div class="input-group">
+        <label>目標金額（円）</label>
+        <input type="number" id="target-amount" placeholder="例：10000" min="1">
+      </div>
+      <div class="input-group">
+        <label>目標の画像（任意）</label>
+        <label class="file-label">
+          <span id="file-label-text">📁 画像を選択（WebP / PNG / JPEG）</span>
+          <input type="file" id="image-file" accept="image/*">
+        </label>
+      </div>
+      <p id="setup-error" class="msg-error hidden"></p>
+      <button id="start-btn" class="primary-btn">貯金スタート！</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div id="main-screen" class="screen hidden">
+    <div class="card">
+      <h2 id="display-goal-name"></h2>
+
+      <div class="visual-area">
+        <div id="canvas-wrap">
+          <canvas id="savings-canvas" width="400"></canvas>
+          <div class="progress-strip">
+            <div id="strip-bar" class="progress-strip-bar"></div>
+          </div>
+        </div>
+        <div id="gauge-wrap" class="hidden">
+          <div class="gauge-track">
+            <div id="gauge-bar"></div>
+          </div>
+          <p id="gauge-percent">0%</p>
+        </div>
+      </div>
+
+      <div class="stats-area">
+        <div class="amount-label">現在の貯金額</div>
+        <div class="amount-val">
+          <span id="current-display">0</span>
+          <small> / <span id="target-display">0</span> 円</small>
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-bottom: 10px;">
+        <input type="number" id="add-amount" placeholder="追加する金額を入力" min="1">
+      </div>
+      <div class="action-buttons">
+        <button id="add-btn" class="primary-btn">貯金する 💰</button>
+        <button id="voice-btn" class="icon-btn" title="音声入力">🎤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Completion overlay -->
+<div id="completion-overlay" class="overlay hidden">
+  <div class="completion-card">
+    <div class="big-emoji">🎉</div>
+    <h2>目標達成！</h2>
+    <p id="completion-msg"></p>
+    <button id="completion-close-btn" class="primary-btn">次のミッションへ！</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
