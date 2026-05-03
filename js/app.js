@@ -75,34 +75,40 @@ sb.auth.onAuthStateChange(async (event) => {
 
 // ─── Load active mission ──────────────────────────────────────────────────────
 async function loadMission() {
-  showScreen('loading');
+  try {
+    const { data, error } = await sb
+      .from('missions')
+      .select('*')
+      .eq('user_id',   currentUserId)
+      .eq('completed', false)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-  const { data } = await sb
-    .from('missions')
-    .select('*')
-    .eq('user_id',   currentUserId)
-    .eq('completed', false)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    if (error) throw error;
 
-  if (!data) {
+    if (!data) {
+      resetSetupForm();
+      showScreen('setup');
+      return;
+    }
+
+    applyMissionToState(data);
+    updateStatsUI();
+    document.getElementById('display-goal-name').textContent = '🎯 ' + state.goalName;
+    showScreen('main');
+
+    if (state.isImageMode) {
+      await loadAndRestoreCanvas();
+    } else {
+      canvasWrap.classList.add('hidden');
+      gaugeWrap.classList.remove('hidden');
+      updateGaugeUI();
+    }
+  } catch (e) {
+    console.error('ミッション読み込みエラー:', e);
     resetSetupForm();
     showScreen('setup');
-    return;
-  }
-
-  applyMissionToState(data);
-  updateStatsUI();
-  document.getElementById('display-goal-name').textContent = '🎯 ' + state.goalName;
-  showScreen('main');
-
-  if (state.isImageMode) {
-    await loadAndRestoreCanvas();
-  } else {
-    canvasWrap.classList.add('hidden');
-    gaugeWrap.classList.remove('hidden');
-    updateGaugeUI();
   }
 }
 

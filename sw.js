@@ -1,4 +1,4 @@
-const CACHE = 'tsumori-v1';
+const CACHE = 'tsumori-v2';
 const STATIC = ['/index.html', '/style.css', '/js/config.js', '/js/app.js', '/manifest.json', '/icons/icon.svg'];
 
 self.addEventListener('install', e => {
