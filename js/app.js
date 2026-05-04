@@ -36,9 +36,9 @@ function showScreen(name) {
   );
   document.getElementById(`${name}-screen`).classList.remove('hidden');
 
-  resetBtn.classList.toggle('hidden',   name !== 'main');
-  historyBtn.classList.toggle('hidden', name !== 'main' && name !== 'setup');
-  backBtn.classList.toggle('hidden',    name !== 'history');
+  resetBtn?.classList.toggle('hidden',   name !== 'main');
+  historyBtn?.classList.toggle('hidden', name !== 'main' && name !== 'setup');
+  backBtn?.classList.toggle('hidden',    name !== 'history');
 }
 
 // ─── 起動時の認証 (getSession → 匿名サインイン) ──────────────────────────────
@@ -344,7 +344,7 @@ if (SR) {
 } else { voiceBtn.style.display = 'none'; }
 
 // ─── Reset ────────────────────────────────────────────────────────────────────
-resetBtn.addEventListener('click', async () => {
+resetBtn?.addEventListener('click', async () => {
   if (!confirm('現在のミッションを終了して新しいミッションを設定しますか？')) return;
   if (state.missionId) {
     await sb.from('missions').update({ completed: true, updated_at: new Date().toISOString() }).eq('id', state.missionId);
@@ -366,8 +366,8 @@ document.getElementById('image-file').addEventListener('change', e => {
 });
 
 // ─── History ──────────────────────────────────────────────────────────────────
-historyBtn.addEventListener('click', () => loadHistory());
-backBtn.addEventListener('click', () => {
+historyBtn?.addEventListener('click', () => loadHistory());
+backBtn?.addEventListener('click', () => {
   if (state.missionId) showScreen('main'); else showScreen('setup');
 });
 
