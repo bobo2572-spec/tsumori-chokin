@@ -3,6 +3,10 @@ services:
     name: tsumori-chokin
     env: static
     staticPublishPath: .
+    headers:
+      - path: /sw.js
+        name: Cache-Control
+        value: no-store, no-cache, must-revalidate
     routes:
       - type: rewrite
         source: /*
