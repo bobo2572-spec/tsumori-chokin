@@ -31,48 +31,62 @@ const backBtn    = document.getElementById('back-btn');
 
 // ─── Screen management ────────────────────────────────────────────────────────
 function showScreen(name) {
-  ['loading', 'setup', 'main', 'history'].forEach(s =>
-    document.getElementById(`${s}-screen`).classList.add('hidden')
+  ['loading', 'login', 'setup', 'main', 'history'].forEach(s =>
+    document.getElementById(`${s}-screen`)?.classList.add('hidden')
   );
-  document.getElementById(`${name}-screen`).classList.remove('hidden');
+  document.getElementById(`${name}-screen`)?.classList.remove('hidden');
 
   resetBtn?.classList.toggle('hidden',   name !== 'main');
   historyBtn?.classList.toggle('hidden', name !== 'main' && name !== 'setup');
   backBtn?.classList.toggle('hidden',    name !== 'history');
 }
 
-// ─── 起動時の認証 (getSession → 匿名サインイン) ──────────────────────────────
+// ─── 起動時の認証 ────────────────────────────────────────────────────────────
 (async function init() {
   showScreen('loading');
-  const failsafe = setTimeout(() => { console.warn('init timeout'); showScreen('setup'); }, 10000);
+  const failsafe = setTimeout(() => { showScreen('login'); }, 10000);
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (session) {
       currentUserId = session.user.id;
+      await loadMission();
     } else {
-      const { data, error } = await sb.auth.signInAnonymously();
-      if (error) throw error;
-      currentUserId = data.session.user.id;
+      showScreen('login');
     }
-    await loadMission();
   } catch (e) {
     console.error('起動エラー:', e);
-    showScreen('setup');
+    showScreen('login');
   } finally {
     clearTimeout(failsafe);
   }
 })();
 
-// セッション期限切れ時の再サインイン
-sb.auth.onAuthStateChange(async (event) => {
-  if (event === 'SIGNED_OUT') {
-    try {
-      const { data } = await sb.auth.signInAnonymously();
-      if (data?.session) {
-        currentUserId = data.session.user.id;
-        await loadMission();
-      }
-    } catch {}
+// 認証状態の変化を監視
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_IN' && session && !currentUserId) {
+    currentUserId = session.user.id;
+    await loadMission();
+  } else if (event === 'SIGNED_OUT') {
+    currentUserId = null;
+    showScreen('login');
+  }
+});
+
+// Google ログインボタン
+document.getElementById('google-login-btn')?.addEventListener('click', async () => {
+  const btn = document.getElementById('google-login-btn');
+  const errEl = document.getElementById('login-error');
+  btn.disabled = true;
+  btn.childNodes[btn.childNodes.length - 1].textContent = ' 接続中…';
+  errEl?.classList.add('hidden');
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  });
+  if (error) {
+    if (errEl) { errEl.textContent = 'ログインに失敗しました: ' + error.message; errEl.classList.remove('hidden'); }
+    btn.disabled = false;
+    btn.childNodes[btn.childNodes.length - 1].textContent = ' Googleでログイン';
   }
 });
 
