@@ -44,6 +44,7 @@ function showScreen(name) {
 // ─── 起動時の認証 (getSession → 匿名サインイン) ──────────────────────────────
 (async function init() {
   showScreen('loading');
+  const failsafe = setTimeout(() => { console.warn('init timeout'); showScreen('setup'); }, 10000);
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (session) {
@@ -57,6 +58,8 @@ function showScreen(name) {
   } catch (e) {
     console.error('起動エラー:', e);
     showScreen('setup');
+  } finally {
+    clearTimeout(failsafe);
   }
 })();
 
